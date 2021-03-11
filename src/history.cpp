@@ -1383,6 +1383,10 @@ void history_t::add_pending_with_file_detection(const std::shared_ptr<history_t>
         return;
     }
 
+    if (persist_mode == history_persistence_mode_t::ephemeral) {
+        return;
+    }
+
     // Find all arguments that look like they could be file paths.
     bool needs_sync_write = false;
     using namespace ast;
