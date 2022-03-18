@@ -196,14 +196,17 @@ static double min(double a, double b) {
     return a < b ? a : b;
 }
 
+static constexpr double kMaximumContiguousInteger =
+    double(1LLU << std::numeric_limits<double>::digits) - 1;
+
 static double maximum(const std::vector<double> &args) {
-    double ret = -std::numeric_limits<double>::infinity();
+    double ret = -kMaximumContiguousInteger;
     for (auto a : args) ret = max(ret, a);
     return ret;
 }
 
 static double minimum(const std::vector<double> &args) {
-    double ret = std::numeric_limits<double>::infinity();
+    double ret = kMaximumContiguousInteger;
     for (auto a : args) ret = min(ret, a);
     return ret;
 }
@@ -425,6 +428,18 @@ double state::base() {
             }
 
             std::vector<double> parameters;
+
+            if (arity < 0) {
+                if (have_open) {
+                    if (type_ == TOK_CLOSE) {
+                        next_token();
+                        return fn(parameters);
+                    }
+                } else if (type_ == TOK_END) {
+                    return fn(parameters);
+                }
+            }
+
             int i;
             for (i = 0; arity < 0 || i < arity; i++) {
                 parameters.push_back(expr());
