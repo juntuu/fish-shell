@@ -185,8 +185,12 @@ fn fac(n: f64) -> f64 {
         .map_or(f64::INFINITY, |x| x as f64)
 }
 
+/// The end of the range such that every integer is representable as a double.
+/// i.e. this is the first value such that x + 1 == x (or == x + 2, depending on rounding mode).
+const MAX_CONTIGUOUS_INTEGER: f64 = (1_u64 << f64::MANTISSA_DIGITS) as f64 - 1.0;
+
 fn maximum(n: &[f64]) -> f64 {
-    n.iter().fold(f64::NEG_INFINITY, |a, &b| {
+    n.iter().fold(-MAX_CONTIGUOUS_INTEGER, |a, &b| {
         if a.is_nan() {
             return a;
         }
@@ -210,7 +214,7 @@ fn maximum(n: &[f64]) -> f64 {
 }
 
 fn minimum(n: &[f64]) -> f64 {
-    n.iter().fold(f64::INFINITY, |a, &b| {
+    n.iter().fold(MAX_CONTIGUOUS_INTEGER, |a, &b| {
         if a.is_nan() {
             return a;
         }
@@ -525,6 +529,18 @@ impl<'s> State<'s> {
                 }
 
                 let mut parameters = vec![];
+
+                if f.arity().is_none() {
+                    if have_open {
+                        if let Token::Close = self.current {
+                            self.next_token();
+                            return f.call(&parameters);
+                        }
+                    } else if let Token::End = self.current {
+                        return f.call(&parameters);
+                    }
+                }
+
                 let mut i = 0;
                 let mut first_err = None;
                 for j in 0.. {
