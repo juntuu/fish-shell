@@ -297,6 +297,8 @@ const BUILTINS: &[(&wstr, Function)] = &[
     (L!("exp"), Function::Fn1(f64::exp)),
     (L!("fac"), Function::Fn1(fac)),
     (L!("floor"), Function::Fn1(f64::floor)),
+    (L!("inf"), Function::Constant(f64::INFINITY)),
+    (L!("intmax"), Function::Constant(MAX_CONTIGUOUS_INTEGER)),
     (L!("ln"), Function::Fn1(f64::ln)),
     (L!("log"), Function::Fn1(f64::log10)),
     (L!("log10"), Function::Fn1(f64::log10)),
