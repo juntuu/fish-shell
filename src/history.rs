@@ -1574,6 +1574,10 @@ impl History {
             return;
         }
 
+        if persist_mode == PersistenceMode::Ephemeral {
+            return;
+        }
+
         // Find all arguments that look like they could be file paths.
         let mut needs_sync_write = false;
         let ast = Ast::parse(s, ParseTreeFlags::empty(), None);
